@@ -1,5 +1,6 @@
 package com.dongba.server;
 
+import com.dongba.dto.CharacterCheckIn;
 import com.dongba.dto.CharacterMotion;
 import com.dongba.dto.ChatMessage;
 import com.dongba.dto.Monster;
@@ -31,6 +32,9 @@ public class ClientMessageProcessor {
 			//send updated monster status
 			ChatMessage chatMessage = (ChatMessage) interpretedMsg;
 			send(messageTransportManager, chatMessage);
+		} else if (interpretedMsg instanceof CharacterCheckIn) {
+			CharacterCheckIn charCheckin = (CharacterCheckIn) interpretedMsg;
+			//TODO: get clientMessageTransporter using the instance of CharacterCheckIn
 		}
 	}
 

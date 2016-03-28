@@ -6,9 +6,8 @@ import com.dongba.dto.Account;
 
 public class SessionManager {
 	
-	public SessionManager(MessageTransporter mt, String cName) throws IOException {
+	public SessionManager(MessageTransporter mt) throws IOException {
 		Account account = new Account(mt.getAccountId());
-		account.setCurrCharacterName(cName);
 		mt.send(account);
 	}
 

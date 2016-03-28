@@ -22,7 +22,7 @@ public class ClientMessageTransportManager {
 	public Map<String, ClientMessageTransporter> getTargetClientList() {
 		return clientMessageTransporters;
 	}
-
+	
 	public void removeNRelease(String messageTransporterName) throws InterruptedException {
 		ClientMessageTransporter cmt = clientMessageTransporters.get(messageTransporterName);
 		cmt.join();

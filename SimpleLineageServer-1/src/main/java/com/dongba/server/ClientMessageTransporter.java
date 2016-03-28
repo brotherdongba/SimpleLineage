@@ -25,7 +25,7 @@ public class ClientMessageTransporter extends Thread {
 	private Account account;
 	private MonsterManager monsterManager;
 	private CharacterPositionChecker cpc;
-	private CharacterManager csm;
+	private CharacterManager cm;
 	private CharacterDto currCharacter;
 
 	public ClientMessageTransporter(Socket socket, ClientMessageTransportManager messageSender, MonsterManager monsterManager) throws IOException {
@@ -44,9 +44,12 @@ public class ClientMessageTransporter extends Thread {
 		}
 	}
 
-	private void initCharacterSelection(String currCharacterName) throws IOException {
-		csm = new CharacterManager(currCharacterName);
-		currCharacter = csm.loadCurrCharacter();
+	public void initCharacterSelection(Account account) throws IOException {
+		cm = new CharacterManager(account);
+		currCharacter = cm.loadCurrCharacter();
+		if (currCharacter == null) {
+			return;
+		}
 		Set<Entry<String, Monster>> monsterList = monsterManager.getMonsterList();
 		cpc = new CharacterPositionChecker(VL, VH);
 		cpc.computeCharPosition(currCharacter);
@@ -54,7 +57,7 @@ public class ClientMessageTransporter extends Thread {
 			Monster monster = entry.getValue();
 			Position posMon = monster.getPosition();
 			if (cpc.isView(posMon)) {
-				System.out.println("send monster : " + monster.getId() + ", hp : " + monster.getHp() + " (" + currCharacterName + ")");
+				System.out.println("send monster : " + monster.getId() + ", hp : " + monster.getHp() + " (" + account + ")");
 				sendMessage(monster);
 			}
 		}
@@ -67,9 +70,8 @@ public class ClientMessageTransporter extends Thread {
 				Object obj = in.readObject();
 				if (obj instanceof Account) {
 					account = (Account) obj;
-					String currCharacterName = account.getCurrCharacterName();
-					System.out.println("user " + account.getId() + " is logged in selecting charater with " + currCharacterName);
-					initCharacterSelection(currCharacterName);
+					System.out.println("user " + account.getId() + " is logged in.");
+					initCharacterSelection(account);
 				} else {
 					Object interpretedMsg = clientMessageInterpreter.interpret(obj);
 					try {
@@ -89,11 +91,11 @@ public class ClientMessageTransporter extends Thread {
 
 	public void disconnect() throws IOException {
 		System.out.println("user " + account.getId() + " is logged out.");
-		csm.saveCurrCharacter(currCharacter);
+		cm.saveCurrCharacter();
 		clientMessageInterpreter = null;
 		clientMessageProcessor = null;
 		cpc = null;
-		csm = null;
+		cm = null;
 		currCharacter = null;
 		try {
 			messageTransportManager.removeNRelease(this.getName());
