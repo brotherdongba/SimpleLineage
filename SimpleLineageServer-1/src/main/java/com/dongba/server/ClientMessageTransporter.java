@@ -7,7 +7,10 @@ import java.net.Socket;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.dongba.dto.Account;
+import com.dongba.dto.AccountSession;
 import com.dongba.dto.CharacterDto;
 import com.dongba.dto.Monster;
 import com.dongba.dto.Position;
@@ -70,7 +73,17 @@ public class ClientMessageTransporter extends Thread {
 				Object obj = in.readObject();
 				if (obj instanceof Account) {
 					account = (Account) obj;
-					System.out.println("user " + account.getId() + " is logged in.");
+					AccountSession accountSession = new AccountSession();
+					if (StringUtils.isBlank(account.getCurrCharacterName())) {
+						System.out.println("user " + account.getId() + " is logged in.");
+						accountSession.setLoginFlag(true);
+						sendMessage(accountSession);
+						return;
+					} else {
+						System.out.println("user " + account.getId() + " is checked in with " + account.getCurrCharacterName());
+						accountSession.setCheckInFlag(true);
+						sendMessage(accountSession);
+					}
 					initCharacterSelection(account);
 				} else {
 					Object interpretedMsg = clientMessageInterpreter.interpret(obj);

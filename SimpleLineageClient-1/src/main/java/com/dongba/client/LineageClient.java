@@ -4,42 +4,40 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import com.dongba.dto.Account;
+
 public class LineageClient {
 	
-	private Socket socket;
-	private MessageTransporter mt;
 	
-	public LineageClient(String host, int port, String accountId) throws UnknownHostException, IOException {
-		this.socket = new Socket(host, port);
-		this.mt = new MessageTransporter(socket, accountId);
+	private Account account;
+
+	private SessionManager sm;
+	
+	public LineageClient(String host, int port) throws IOException {
+		sm = new SessionManager(new TCPMessageTransporter(new Socket(host, port)));
+	}
+
+	public void login(String accountId) throws IOException {
+		account = new Account(accountId);
+		sm.login(account);
 	}
 	
 	public void checkInCharacter(String cName) {
 		try {
-			start(cName);
+			account.setCurrCharacterName(cName);
+			sm.checkIn(account);
 		} catch (IOException e) {
 			System.out.println("failed to check in character by name " + cName);
 		}
 	}
 
-	private void start(String cName) throws IOException {
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-		}
-		new SessionManager(mt);
-		new ServerMessageReciever(mt).start();
-		new ChattingClient(mt).start();
-		new MotionClient(mt).start();
-	}
-	
-	@SuppressWarnings("resource")
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		String host = "localhost";
 		int port = 1500;
 		String accountId = "dongba";
-		LineageClient lineageClient = new LineageClient(host, port, accountId);
 		String cName = "dongba";
+		LineageClient lineageClient = new LineageClient(host, port);
+		lineageClient.login(accountId);
 		lineageClient.checkInCharacter(cName);
 	}
 

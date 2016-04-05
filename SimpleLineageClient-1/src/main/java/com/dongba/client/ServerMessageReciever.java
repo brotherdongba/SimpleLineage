@@ -6,8 +6,8 @@ public class ServerMessageReciever extends Thread {
 	
 	private MessageTransporter mt;
 
-	public ServerMessageReciever(MessageTransporter messageTransporter) throws IOException {
-		this.mt = messageTransporter;
+	public ServerMessageReciever(MessageTransporter mt) throws IOException {
+		this.mt = mt;
 	}
 	
 	public void run() {
@@ -17,10 +17,8 @@ public class ServerMessageReciever extends Thread {
 				System.out.println("received message : " + msg.toString());
 			}
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

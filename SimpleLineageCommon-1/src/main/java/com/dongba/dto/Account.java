@@ -12,6 +12,7 @@ public class Account implements Serializable {
 
 	public Account(String id) {
 		this.id = id;
+		this.currCharacterName = "";
 	}
 
 	public String getId() {
@@ -28,10 +29,6 @@ public class Account implements Serializable {
 
 	public void setCurrCharacterName(String currCharacterName) {
 		this.currCharacterName = currCharacterName;
-	}
-	
-	public static void main(String[] args) {
-		
 	}
 	
 }

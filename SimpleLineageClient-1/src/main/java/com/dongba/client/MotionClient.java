@@ -5,16 +5,21 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import com.dongba.dto.Account;
 import com.dongba.dto.CharacterMotion;
 
 public class MotionClient extends Thread {
 	
-	private MessageTransporter mt;
 	private JFrame frame;
+	
+	private MessageTransporter mt;
+	
+	private Account account;
 
-	public MotionClient(MessageTransporter mt) {
-		this.mt = mt;
+	public MotionClient(Account account) {
 		this.frame = new JFrame("input motion");
+		this.mt = new UDPMessageTransporter();
+		this.account = account;
 	}
 	
 	public void run() {
@@ -39,7 +44,7 @@ public class MotionClient extends Thread {
 		if (split.length != 2) {
 			return null;
 		}
-		return new CharacterMotion(mt.getAccountId(), split[0], Integer.parseInt(split[1]));
+		return new CharacterMotion(account.getCurrCharacterName(), split[0], Integer.parseInt(split[1]));
 	}
 
 }
