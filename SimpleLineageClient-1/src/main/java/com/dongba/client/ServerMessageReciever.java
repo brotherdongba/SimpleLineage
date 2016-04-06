@@ -5,7 +5,7 @@ import java.io.IOException;
 public class ServerMessageReciever extends Thread {
 	
 	private MessageTransporter mt;
-
+	
 	public ServerMessageReciever(MessageTransporter mt) throws IOException {
 		this.mt = mt;
 	}

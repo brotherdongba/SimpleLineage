@@ -78,13 +78,13 @@ public class ClientMessageTransporter extends Thread {
 						System.out.println("user " + account.getId() + " is logged in.");
 						accountSession.setLoginFlag(true);
 						sendMessage(accountSession);
-						return;
 					} else {
 						System.out.println("user " + account.getId() + " is checked in with " + account.getCurrCharacterName());
+						accountSession.setLoginFlag(true);
 						accountSession.setCheckInFlag(true);
 						sendMessage(accountSession);
+						initCharacterSelection(account);
 					}
-					initCharacterSelection(account);
 				} else {
 					Object interpretedMsg = clientMessageInterpreter.interpret(obj);
 					try {

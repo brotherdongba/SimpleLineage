@@ -2,29 +2,35 @@ package com.dongba.client;
 
 import java.io.IOException;
 
+import javax.naming.AuthenticationException;
+
 import com.dongba.dto.Account;
+import com.dongba.dto.AccountSession;
 
 public class SessionManager {
 	
-	private final MessageTransporter mt;
-
-	public SessionManager(MessageTransporter mt) throws IOException {
-		this.mt = mt;
+	public boolean login(MessageTransporter mt, Account account) {
+		try {
+			mt.send(account);
+			isSuccessLogin(mt);
+		} catch (IOException e) {
+			System.exit(0);
+		} catch (AuthenticationException e) {
+			return false;
+		} catch (ClassNotFoundException e) {
+		}
+		return true;
 	}
 
-	public void login(Account account) throws IOException {
-		new ServerMessageReciever(mt).start();
+	public void checkInCharacter(MessageTransporter mt, Account account) throws IOException {
 		mt.send(account);
 	}
-
-	public void checkIn(Account account) throws IOException {
-		new ChattingClient(mt, account).start();
-		new MotionClient(account).start();
-		mt.send(account);
-	}
-
-	public MessageTransporter getMessageTransporter() {
-		return mt;
+	
+	private void isSuccessLogin(MessageTransporter mt) throws ClassNotFoundException, IOException, AuthenticationException {
+		AccountSession as = (AccountSession)mt.receive();
+		if (as.getLoginFlag() == false){
+			throw new AuthenticationException(as.getMessage());
+		}
 	}
 
 }

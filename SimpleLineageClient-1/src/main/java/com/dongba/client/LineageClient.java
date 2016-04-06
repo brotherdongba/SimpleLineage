@@ -13,22 +13,31 @@ public class LineageClient {
 
 	private SessionManager sm;
 	
+	private MessageTransporter mt;
+	
 	public LineageClient(String host, int port) throws IOException {
-		sm = new SessionManager(new TCPMessageTransporter(new Socket(host, port)));
+		mt = new TCPMessageTransporter(new Socket(host, port));
+		sm = new SessionManager();
 	}
 
-	public void login(String accountId) throws IOException {
+	public boolean login(String accountId) throws IOException {
 		account = new Account(accountId);
-		sm.login(account);
+		return sm.login(mt, account);
 	}
 	
 	public void checkInCharacter(String cName) {
 		try {
 			account.setCurrCharacterName(cName);
-			sm.checkIn(account);
+			sm.checkInCharacter(mt, account);
 		} catch (IOException e) {
 			System.out.println("failed to check in character by name " + cName);
 		}
+	}
+	
+	public void init() throws IOException {
+		new ServerMessageReciever(mt).start();
+		new ChattingClient(mt, account).start();
+		new MotionClient(account).start();
 	}
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
@@ -37,8 +46,14 @@ public class LineageClient {
 		String accountId = "dongba";
 		String cName = "dongba";
 		LineageClient lineageClient = new LineageClient(host, port);
-		lineageClient.login(accountId);
+		while(true) {
+			if (lineageClient.login(accountId)) {
+				break;
+			}
+		}
 		lineageClient.checkInCharacter(cName);
+		lineageClient.init();
+		System.out.println("play game!");
 	}
 
 }

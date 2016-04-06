@@ -30,5 +30,11 @@ public class Account implements Serializable {
 	public void setCurrCharacterName(String currCharacterName) {
 		this.currCharacterName = currCharacterName;
 	}
+
+	@Override
+	public String toString() {
+		return "Account [id=" + id + ", currCharacterName=" + currCharacterName
+				+ "]";
+	}
 	
 }

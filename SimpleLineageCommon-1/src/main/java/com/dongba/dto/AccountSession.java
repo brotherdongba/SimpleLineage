@@ -23,12 +23,17 @@ public class AccountSession implements Serializable {
 		this.checkInFlag = checkInFlag;
 	}
 
-	public boolean isLoginFlag() {
+	public boolean getLoginFlag() {
 		return loginFlag;
 	}
 
 	public boolean isCheckInFlag() {
 		return checkInFlag;
+	}
+
+	public String getMessage() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
